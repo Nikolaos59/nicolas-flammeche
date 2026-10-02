@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ShoppingBag, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowLeft, MapPin, Minus, Plus, ShoppingBag, Trash2, Truck, X } from 'lucide-react';
 import './App.css';
 
 const products = [
@@ -54,19 +54,36 @@ function ProductPrice({ product }) {
 function App() {
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [deliveryMode, setDeliveryMode] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [toast, setToast] = useState('');
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = cart.length ? 8 : 0;
-  const total = subtotal + shipping;
+  useEffect(() => {
+    document.body.style.overflow = cartOpen || selectedProduct ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [cartOpen, selectedProduct]);
 
   useEffect(() => {
-    document.body.style.overflow = cartOpen || checkoutOpen || selectedProduct ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [cartOpen, checkoutOpen, selectedProduct]);
+    try {
+      const savedCart = JSON.parse(localStorage.getItem('nicolas-flammeche-cart') || '[]');
+      if (Array.isArray(savedCart)) {
+        setCart(savedCart.flatMap(({ id, quantity }) => {
+          const product = products.find((item) => item.id === id);
+          return product && Number.isInteger(quantity) && quantity > 0
+            ? [{ ...product, quantity: Math.min(quantity, 99) }]
+            : [];
+        }));
+      }
+    } catch {
+      localStorage.removeItem('nicolas-flammeche-cart');
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('nicolas-flammeche-cart', JSON.stringify(cart.map(({ id, quantity }) => ({ id, quantity }))));
+  }, [cart]);
 
   useEffect(() => {
     if (!toast) return;
@@ -101,13 +118,6 @@ function App() {
     setCart((prev) => prev.filter((item) => item.id !== id));
   }
 
-  function pay() {
-    if (!cart.length) return setToast('🕯 Votre panier est vide');
-    setCart([]);
-    setCheckoutOpen(false);
-    setToast('✨ Votre flamme est en préparation');
-  }
-
   return (
     <>
       <nav className="nav">
@@ -117,7 +127,7 @@ function App() {
           <a href="#rituel">Rituel</a>
           <a href="#atelier">L'Atelier</a>
         </div>
-        <button className="cart-button" onClick={() => setCartOpen(true)} aria-label="Ouvrir le panier">
+        <button className="cart-button" onClick={() => setCartOpen(true)} aria-label={`Ouvrir le panier, ${cartCount} article${cartCount > 1 ? 's' : ''}`}>
           <ShoppingBag size={21} />
           <span>{cartCount}</span>
         </button>
@@ -158,7 +168,7 @@ function App() {
                   <div className="product-media">
                     {product.badge && <span className="badge">{product.badge}</span>}
                     <ProductVisual product={product} />
-                    <button className="add-btn" onClick={(e) => { e.stopPropagation(); addToCart(product); }}>Ajouter à la collection</button>
+                    <button className="add-btn" onClick={(e) => { e.stopPropagation(); addToCart(product); }}>Ajouter au panier</button>
                   </div>
                   <div className="product-info">
                     <h3>{product.name}</h3>
@@ -176,8 +186,7 @@ function App() {
         <Footer />
       </main>
 
-      {cartOpen && <CartDrawer cart={cart} subtotal={subtotal} onClose={() => setCartOpen(false)} onQty={updateQty} onRemove={removeItem} onCheckout={() => { setCartOpen(false); setCheckoutOpen(true); }} />}
-      {checkoutOpen && <Checkout cart={cart} subtotal={subtotal} shipping={shipping} total={total} onClose={() => setCheckoutOpen(false)} onQty={updateQty} onPay={pay} />}
+      {cartOpen && <CartPage cart={cart} cartCount={cartCount} subtotal={subtotal} deliveryMode={deliveryMode} onDeliveryMode={setDeliveryMode} onClose={() => setCartOpen(false)} onQty={updateQty} onRemove={removeItem} onShop={() => { setCartOpen(false); document.querySelector('#collection')?.scrollIntoView({ behavior: 'smooth' }); }} />}
       {selectedProduct && <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} onAdd={addToCart} />}
       {toast && <div className="toast">{toast}</div>}
     </>
@@ -202,15 +211,23 @@ function Atelier() {
 
 function ProductModal({ product, onClose, onAdd }) {
   const details = [['Intensité', product.intensity], ['Durée', product.burn], ['Tête', product.top], ['Cœur', product.heart], ['Fond', product.base], ['Moment', product.moment], ['Pièce', product.room], ['Rituel', product.ritual]].filter(([, value]) => value);
-  return <div className="modal-backdrop" onClick={onClose}><div className="product-modal" onClick={(e) => e.stopPropagation()}><button className="close" onClick={onClose}><X size={18} /></button><div className="modal-visual"><ProductVisual product={product} large /></div><div className="modal-copy"><span className="eyebrow">Expérience produit</span><h2>{product.name}</h2><p className="story">{product.story}</p><p>{product.notes}</p><div className="meta">{details.map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div><ProductPrice product={product} /><button className="btn" onClick={() => { onAdd(product); onClose(); }}>Ajouter à la collection</button></div></div></div>;
+  return <div className="modal-backdrop" onClick={onClose}><div className="product-modal" onClick={(e) => e.stopPropagation()}><button className="close" onClick={onClose}><X size={18} /></button><div className="modal-visual"><ProductVisual product={product} large /></div><div className="modal-copy"><span className="eyebrow">Expérience produit</span><h2>{product.name}</h2><p className="story">{product.story}</p><p>{product.notes}</p><div className="meta">{details.map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div><ProductPrice product={product} /><button className="btn" onClick={() => { onAdd(product); onClose(); }}>Ajouter au panier</button></div></div></div>;
 }
 
-function CartDrawer({ cart, subtotal, onClose, onQty, onRemove, onCheckout }) {
-  return <><div className="overlay" onClick={onClose} /><aside className="cart"><button className="close" onClick={onClose}><X size={18} /></button><span className="eyebrow">Panier</span><h2>Vos lueurs</h2><div className="cart-items">{cart.length ? cart.map((item) => <div className="cart-item" key={item.id}><div className="thumb"><ProductVisual product={item} /></div><div><h3>{item.name}</h3><p>{item.notes}</p><div className="qty"><button onClick={() => onQty(item.id, -1)}>−</button><span>{item.quantity}</span><button onClick={() => onQty(item.id, 1)}>+</button><button onClick={() => onRemove(item.id)}>Retirer</button></div></div><strong>{euro.format(item.price * item.quantity)}</strong></div>) : <p className="empty">Votre panier sommeille encore.</p>}</div><div className="cart-bottom"><div><span>Total</span><strong>{euro.format(subtotal)}</strong></div><button className="btn" onClick={onCheckout}>Finaliser la commande</button></div></aside></>;
-}
-
-function Checkout({ cart, subtotal, shipping, total, onClose, onQty, onPay }) {
-  return <div className="checkout-backdrop"><div className="checkout"><button className="close" onClick={onClose}><X size={18} /></button><header><span className="eyebrow">Panier & paiement</span><h2>Vérifier votre commande</h2><p>Votre commande sera préparée dans un écrin parfumé, enveloppée de papier texturé et scellée d’une signature dorée.</p></header><div className="checkout-layout"><main><section className="checkout-block"><h3>Votre sélection</h3>{cart.map((item) => <div className="checkout-item" key={item.id}><div className="thumb"><ProductVisual product={item} /></div><div><h4>{item.name}</h4><p>{item.notes}</p></div><div className="qty"><button onClick={() => onQty(item.id, -1)}>−</button><span>{item.quantity}</span><button onClick={() => onQty(item.id, 1)}>+</button></div><strong>{euro.format(item.price * item.quantity)}</strong></div>)}</section><section className="checkout-block"><h3>Livraison</h3><div className="form"><input placeholder="Prénom" /><input placeholder="Nom" /><input placeholder="Email" /><input placeholder="Adresse" /><input placeholder="Ville" /><input placeholder="Code postal" /></div></section><section className="checkout-block"><h3>Paiement</h3><div className="form"><input placeholder="4242 4242 4242 4242" /><input placeholder="08/28" /><input placeholder="CVC" /></div></section></main><aside><div className="packaging-card"><div className="box-visual"><span /></div><h3>L’écrin Nicolas Flammèche</h3><p>Papier texturé, carte parfumée, pli soigné et signature dorée. Une expérience d’ouverture pensée comme un premier rituel.</p></div><div className="summary"><div><span>Sous-total</span><strong>{euro.format(subtotal)}</strong></div><div><span>Livraison</span><strong>{shipping ? euro.format(shipping) : 'Offerte'}</strong></div><div><span>Écrin parfumé</span><strong>Offert</strong></div><hr /><div><span>Total</span><strong>{euro.format(total)}</strong></div><button className="btn" onClick={onPay}>Confirmer la commande</button></div></aside></div></div></div>;
+function CartPage({ cart, cartCount, subtotal, deliveryMode, onDeliveryMode, onClose, onQty, onRemove, onShop }) {
+  return <div className="cart-page-backdrop"><main className="cart-page" role="dialog" aria-modal="true" aria-labelledby="cart-page-title">
+    <header className="cart-page-header"><a className="brand" href="#top" onClick={onClose}><span>Nicolas</span><em>Flammèche</em></a><button className="cart-back" onClick={onClose}><ArrowLeft size={16} /> Continuer mes achats</button><button className="cart-page-close" onClick={onClose} aria-label="Fermer le panier"><X size={19} /></button></header>
+    <div className="cart-page-content"><div className="cart-page-heading"><span className="eyebrow">Votre sélection</span><h2 id="cart-page-title">Le panier</h2><p>{cartCount ? `${cartCount} article${cartCount > 1 ? 's' : ''} choisi${cartCount > 1 ? 's' : ''} avec soin.` : 'Votre panier sommeille encore.'}</p></div>
+      {!cart.length ? <section className="cart-empty"><ShoppingBag size={32} strokeWidth={1.2} /><h3>Une lueur vous attend</h3><p>Découvrez Calambour et Petit Pin, deux bougies aux signatures singulières.</p><button className="btn" onClick={onShop}>Découvrir la collection</button></section> : <div className="cart-page-grid">
+        <div className="cart-main-column"><section className="cart-section"><div className="cart-section-title"><h3>Vos bougies</h3><span>{cartCount} article{cartCount > 1 ? 's' : ''}</span></div>{cart.map((item) => <article className="cart-line" key={item.id}><div className="cart-line-photo"><ProductVisual product={item} /></div><div className="cart-line-info"><span className="eyebrow">Bougie artisanale</span><h4>{item.name}</h4><p>{euro.format(item.price)} · offre d’ouverture</p><div className="cart-line-actions"><div className="cart-quantity"><button onClick={() => onQty(item.id, -1)} aria-label={`Retirer une ${item.name} du panier`}><Minus size={14} /></button><span>{item.quantity}</span><button onClick={() => onQty(item.id, 1)} aria-label={`Ajouter une ${item.name} au panier`}><Plus size={14} /></button></div><button className="remove-line" onClick={() => onRemove(item.id)}><Trash2 size={14} /> Retirer</button></div></div><strong className="cart-line-price">{euro.format(item.price * item.quantity)}</strong></article>)}</section>
+          <section className="cart-section delivery-section"><div className="cart-section-title"><div><span className="eyebrow">À votre porte</span><h3>Mode de livraison</h3></div><span>Choisissez une option</span></div><div className="delivery-options">
+            <label className={`delivery-option ${deliveryMode === 'colissimo' ? 'selected' : ''}`}><input type="radio" name="delivery" value="colissimo" checked={deliveryMode === 'colissimo'} onChange={() => onDeliveryMode('colissimo')} /><span className="delivery-icon"><Truck size={21} /></span><span className="delivery-copy"><strong>Colissimo</strong><small>Livraison à l’adresse de votre choix</small></span><span className="delivery-price">Tarif à confirmer</span></label>
+            <label className={`delivery-option ${deliveryMode === 'mondial-relay' ? 'selected' : ''}`}><input type="radio" name="delivery" value="mondial-relay" checked={deliveryMode === 'mondial-relay'} onChange={() => onDeliveryMode('mondial-relay')} /><span className="delivery-icon"><MapPin size={21} /></span><span className="delivery-copy"><strong>Mondial Relay</strong><small>Point Relais® ou Locker à sélectionner</small></span><span className="delivery-price">Tarif à confirmer</span></label>
+          </div><p className="delivery-note">Les tarifs seront affichés avant le paiement. Pour Mondial Relay, le choix du point de retrait se fera à l’étape de livraison.</p></section>
+        </div><aside className="cart-summary"><span className="eyebrow">Récapitulatif</span><h3>Votre commande</h3><div className="cart-summary-row"><span>Sous-total</span><strong>{euro.format(subtotal)}</strong></div><div className="cart-summary-row"><span>Livraison</span><span className="muted">Selon le mode choisi</span></div><div className="cart-summary-total"><span>Total provisoire</span><strong>{euro.format(subtotal)}</strong></div><p className="cart-summary-note">Le montant de la livraison sera ajouté avant le règlement.</p><button className="btn cart-continue" disabled>{deliveryMode ? 'Paiement bientôt disponible' : 'Choisir une livraison'}</button><p className="cart-secure">Paiement sécurisé bientôt disponible via Stripe.</p><button className="cart-continue-shopping" onClick={onShop}>← Retourner à la collection</button></aside>
+      </div>}
+    </div>
+  </main></div>;
 }
 
 function Footer() {
