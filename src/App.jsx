@@ -133,6 +133,8 @@ function App() {
         </button>
       </nav>
 
+      <section className="marquee" aria-label="Offre spéciale ouverture du site"><div><span>Offre spéciale ouverture du site&nbsp; ✦ &nbsp;Offre spéciale ouverture du site&nbsp; ✦ &nbsp;</span><span aria-hidden="true">Offre spéciale ouverture du site&nbsp; ✦ &nbsp;Offre spéciale ouverture du site&nbsp; ✦ &nbsp;</span></div></section>
+
       <main id="top">
         <section className="hero grain">
           <div className="container hero-grid">
@@ -152,8 +154,6 @@ function App() {
             </div>
           </div>
         </section>
-
-        <section className="marquee" aria-label="Offre spéciale ouverture du site"><div><span>Offre spéciale ouverture du site&nbsp; ✦ &nbsp;Offre spéciale ouverture du site&nbsp; ✦ &nbsp;</span><span aria-hidden="true">Offre spéciale ouverture du site&nbsp; ✦ &nbsp;Offre spéciale ouverture du site&nbsp; ✦ &nbsp;</span></div></section>
 
         <section className="products" id="collection">
           <div className="container">
