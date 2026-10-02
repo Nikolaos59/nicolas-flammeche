@@ -153,7 +153,7 @@ function App() {
           </div>
         </section>
 
-        <section className="marquee"><div><span>Cire végétale naturelle · Coulée à la main · Fragrances artisanales · Hauts-de-France · Sans paraffine · Mèche en coton · Éco-responsable · </span><span>Cire végétale naturelle · Coulée à la main · Fragrances artisanales · Hauts-de-France · Sans paraffine · Mèche en coton · Éco-responsable · </span></div></section>
+        <section className="marquee" aria-label="Offre spéciale ouverture du site"><div><span>Offre spéciale ouverture du site&nbsp; ✦ &nbsp;Offre spéciale ouverture du site&nbsp; ✦ &nbsp;</span><span aria-hidden="true">Offre spéciale ouverture du site&nbsp; ✦ &nbsp;Offre spéciale ouverture du site&nbsp; ✦ &nbsp;</span></div></section>
 
         <section className="products" id="collection">
           <div className="container">
