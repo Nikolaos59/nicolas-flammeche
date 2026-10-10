@@ -242,7 +242,7 @@ function ConditionsPage({ onClose }) {
       <div className="terms-draft-notice"><strong>Version provisoire — boutique non ouverte aux commandes</strong><p>Cette page est publiée à titre informatif. Les éléments entre crochets doivent être complétés avec les informations exactes de l’entreprise avant toute vente. L’absence de nom de domaine ne modifie pas ces obligations. La commande en ligne et les paiements ne sont pas encore activés.</p></div>
       <span className="eyebrow">Informations boutique</span><h1 id="terms-title">Conditions générales de vente</h1><p className="terms-updated">Projet de conditions pour la boutique en ligne Nicolas Flammèche · version du 10 octobre 2026</p>
 
-      <section><h2>1. Vendeur et champ d’application</h2><p>Les présentes conditions encadrent les ventes de bougies artisanales proposées sur le site Nicolas Flammèche aux consommateurs. Le vendeur est :</p><ul><li>Nom ou dénomination sociale : <strong>[À COMPLÉTER]</strong></li><li>Nom commercial : Nicolas Flammèche</li><li>Statut et forme juridique : <strong>[À COMPLÉTER]</strong></li><li>Adresse postale : <strong>[À COMPLÉTER]</strong></li><li>SIRET : <strong>[À COMPLÉTER]</strong></li><li>Courriel et téléphone : <strong>[À COMPLÉTER]</strong></li><li>TVA : <strong>[RÉGIME ET NUMÉRO À CONFIRMER]</strong></li></ul></section>
+      <section><h2>1. Vendeur et champ d’application</h2><p>Les présentes conditions encadrent les ventes de bougies artisanales proposées sur le site Nicolas Flammèche aux consommateurs. Le vendeur est :</p><ul><li>Nom ou dénomination sociale : <strong>[NOM ET PRÉNOM DE L’ENTREPRENEUR À COMPLÉTER]</strong></li><li>Nom commercial : Nicolas Flammèche</li><li>Statut et forme juridique : <strong>Entrepreneur individuel relevant du régime micro-entrepreneur</strong></li><li>Adresse postale : <strong>[À COMPLÉTER]</strong></li><li>SIRET : <strong>[À COMPLÉTER]</strong></li><li>Courriel et téléphone : <strong>[À COMPLÉTER]</strong></li><li>TVA : <strong>[RÉGIME ET NUMÉRO À CONFIRMER]</strong></li></ul></section>
 
       <section><h2>2. Produits et prix</h2><p>La boutique propose notamment les bougies Calambour et Petit Pin. Leurs caractéristiques essentielles sont présentées sur leurs fiches produit. Les prix affichés sont en euros ; leur statut au regard de la TVA et les frais applicables doivent être confirmés par le vendeur avant publication. Les frais de livraison sont indiqués avant la validation de toute commande.</p><p>Les prix et éventuelles réductions applicables sont ceux affichés au moment de la commande. Une commande n’est définitive qu’après confirmation du paiement.</p></section>
 
@@ -269,6 +269,7 @@ function Footer({ onOpenCart, onOpenTerms }) {
 }
 
 export default App;
+
 
 
 
