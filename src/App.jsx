@@ -183,7 +183,7 @@ function App() {
 
         <InfoSection />
         <Atelier />
-        <Footer />
+        <Footer onOpenCart={() => setCartOpen(true)} />
       </main>
 
       {cartOpen && <CartPage cart={cart} cartCount={cartCount} subtotal={subtotal} deliveryMode={deliveryMode} onDeliveryMode={setDeliveryMode} onClose={() => setCartOpen(false)} onQty={updateQty} onRemove={removeItem} onShop={() => { setCartOpen(false); document.querySelector('#collection')?.scrollIntoView({ behavior: 'smooth' }); }} />}
@@ -230,9 +230,10 @@ function CartPage({ cart, cartCount, subtotal, deliveryMode, onDeliveryMode, onC
   </main></div>;
 }
 
-function Footer() {
-  return <footer><div className="container footer-grid"><div><div className="brand"><span>Nicolas</span><em>Flammèche</em></div><p>Bougies artisanales façonnées dans les Hauts-de-France.</p></div><div><h4>Boutique</h4><a>Collection</a><a>Nouveautés</a></div><div><h4>Maison</h4><a>Atelier</a><a>Savoir-faire</a></div><div><h4>Service</h4><a>Livraison</a><a>Contact</a></div></div></footer>;
+function Footer({ onOpenCart }) {
+  return <footer><div className="container footer-grid"><div><a className="brand" href="#top"><span>Nicolas</span><em>Flammèche</em></a><p>Bougies artisanales façonnées dans les Hauts-de-France.</p></div><div><h4>Boutique</h4><a href="#collection">Collection</a><a href="#collection">Nouveautés</a></div><div><h4>Maison</h4><a href="#atelier">Atelier</a><a href="#rituel">Savoir-faire</a></div><div><h4>Service</h4><button className="footer-link" onClick={onOpenCart}>Livraison</button><span className="footer-link-placeholder">Contact</span></div></div></footer>;
 }
 
 export default App;
+
 
