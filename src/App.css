@@ -146,6 +146,24 @@ footer a { display:block; color:rgba(245,239,228,.72); margin-top:10px; }
 footer .footer-link { display:block; margin-top:10px; padding:0; background:transparent; color:rgba(245,239,228,.72); text-align:left; }
 footer .footer-link:hover { color:var(--paper); }
 footer .footer-link-placeholder { display:block; margin-top:10px; color:rgba(245,239,228,.45); }
+.terms-backdrop { position:fixed; inset:0; z-index:125; overflow-y:auto; background:#f8f3ea; }
+.terms-page { min-height:100vh; background:radial-gradient(ellipse at 8% 18%,rgba(212,98,26,.045),transparent 30%),linear-gradient(180deg,#fcf8f1,#f5efe4); }
+.terms-content { width:min(900px,calc(100% - 64px)); margin:0 auto; padding:64px 0 100px; }
+.terms-content > .eyebrow { margin:32px 0 14px; }
+.terms-content h1 { font-size:clamp(50px,7vw,76px); }
+.terms-updated { margin-top:14px; color:var(--smoke); font-size:13px; }
+.terms-draft-notice { padding:20px 24px; border:1px solid rgba(156,93,35,.28); border-radius:18px; background:#fff4dc; color:#6e431d; }
+.terms-draft-notice p { margin-top:6px; font-size:13px; line-height:1.7; }
+.terms-content section { margin-top:34px; padding-top:28px; border-top:1px solid var(--line); }
+.terms-content section h2 { margin-bottom:14px; font-size:32px; }
+.terms-content section p,.terms-content li { color:rgba(22,17,13,.74); font-size:15px; line-height:1.85; }
+.terms-content section p + p { margin-top:12px; }
+.terms-content ul { margin:12px 0 0 20px; }
+.terms-form { margin-top:20px; padding:22px; border-radius:16px; background:rgba(255,255,255,.68); }
+.terms-form h3 { margin-bottom:12px; font-size:25px; }
+.terms-form p + p { margin-top:8px; }
+.terms-checklist { padding:24px!important; border:1px solid rgba(156,93,35,.2)!important; border-radius:18px; background:rgba(255,244,220,.58); }
+.terms-disclaimer { margin-top:30px; color:var(--smoke); font-size:12px; line-height:1.7; }
 @media (max-width: 960px) {
   .footer-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:32px 40px; }
 }
@@ -226,6 +244,9 @@ button:focus-visible,a:focus-visible,input:focus-visible { outline:2px solid var
   .product-grid { grid-template-columns:minmax(0,520px); gap:28px; }
 }
 @media (max-width: 760px) {
+  .terms-content { width:calc(100% - 36px); padding:38px 0 60px; }
+  .terms-content section h2 { font-size:27px; }
+  .terms-content section p,.terms-content li { font-size:14px; }
   .marquee { height:38px; }
   .marquee div { font-size:11px; }
   .cart-page-header { min-height:74px; padding:12px 18px; grid-template-columns:1fr auto auto; gap:8px; }
@@ -258,5 +279,6 @@ button:focus-visible,a:focus-visible,input:focus-visible { outline:2px solid var
   .product-media { min-height:460px; }
   .product-photo { width:min(92%, 420px); height:420px; }
 }
+
 
 

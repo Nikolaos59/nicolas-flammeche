@@ -58,6 +58,7 @@ function App() {
   const [deliveryMode, setDeliveryMode] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [toast, setToast] = useState('');
+  const [termsOpen, setTermsOpen] = useState(false);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -184,11 +185,12 @@ function App() {
 
         <InfoSection />
         <Atelier />
-        <Footer onOpenCart={() => setCartOpen(true)} />
+        <Footer onOpenCart={() => setCartOpen(true)} onOpenTerms={() => setTermsOpen(true)} />
       </main>
 
       {cartOpen && <CartPage cart={cart} cartCount={cartCount} subtotal={subtotal} deliveryMode={deliveryMode} onDeliveryMode={setDeliveryMode} onClose={() => setCartOpen(false)} onQty={updateQty} onRemove={removeItem} onShop={() => { setCartOpen(false); document.querySelector('#collection')?.scrollIntoView({ behavior: 'smooth' }); }} />}
       {selectedProduct && <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} onAdd={addToCart} />}
+      {termsOpen && <ConditionsPage onClose={() => setTermsOpen(false)} />}
       {toast && <div className="toast">{toast}</div>}
     </>
   );
@@ -233,10 +235,40 @@ function CartPage({ cart, cartCount, subtotal, deliveryMode, onDeliveryMode, onC
   </main></div>;
 }
 
-function Footer({ onOpenCart }) {
-  return <footer><div className="container footer-grid"><div><a className="brand" href="#top"><span>Nicolas</span><em>Flammèche</em></a><p>Bougies artisanales façonnées dans les Hauts-de-France.</p></div><div><h4>Boutique</h4><a href="#collection">Collection</a><a href="#collection">Nouveautés</a></div><div><h4>Maison</h4><a href="#atelier">Atelier</a><a href="#rituel">Savoir-faire</a></div><div><h4>Service</h4><button className="footer-link" onClick={onOpenCart}>Livraison</button><span className="footer-link-placeholder">Contact</span></div></div></footer>;
+function ConditionsPage({ onClose }) {
+  return <div className="terms-backdrop"><main className="terms-page" role="dialog" aria-modal="true" aria-labelledby="terms-title">
+    <header className="cart-page-header"><a className="brand" href="#top" onClick={onClose}><span>Nicolas</span><em>Flammèche</em></a><button className="cart-back" onClick={onClose}><ArrowLeft size={16} /> Retour au site</button><button className="cart-page-close" onClick={onClose} aria-label="Fermer les conditions générales"><X size={19} /></button></header>
+    <article className="terms-content">
+      <div className="terms-draft-notice"><strong>Version provisoire — boutique non ouverte aux commandes</strong><p>Cette page est publiée à titre informatif. Les éléments entre crochets doivent être complétés avec les informations exactes de l’entreprise avant toute vente. L’absence de nom de domaine ne modifie pas ces obligations. La commande en ligne et les paiements ne sont pas encore activés.</p></div>
+      <span className="eyebrow">Informations boutique</span><h1 id="terms-title">Conditions générales de vente</h1><p className="terms-updated">Projet de conditions pour la boutique en ligne Nicolas Flammèche · version du 10 octobre 2026</p>
+
+      <section><h2>1. Vendeur et champ d’application</h2><p>Les présentes conditions encadrent les ventes de bougies artisanales proposées sur le site Nicolas Flammèche aux consommateurs. Le vendeur est :</p><ul><li>Nom ou dénomination sociale : <strong>[À COMPLÉTER]</strong></li><li>Nom commercial : Nicolas Flammèche</li><li>Statut et forme juridique : <strong>[À COMPLÉTER]</strong></li><li>Adresse postale : <strong>[À COMPLÉTER]</strong></li><li>SIRET : <strong>[À COMPLÉTER]</strong></li><li>Courriel et téléphone : <strong>[À COMPLÉTER]</strong></li><li>TVA : <strong>[RÉGIME ET NUMÉRO À CONFIRMER]</strong></li></ul></section>
+
+      <section><h2>2. Produits et prix</h2><p>La boutique propose notamment les bougies Calambour et Petit Pin. Leurs caractéristiques essentielles sont présentées sur leurs fiches produit. Les prix affichés sont en euros ; leur statut au regard de la TVA et les frais applicables doivent être confirmés par le vendeur avant publication. Les frais de livraison sont indiqués avant la validation de toute commande.</p><p>Les prix et éventuelles réductions applicables sont ceux affichés au moment de la commande. Une commande n’est définitive qu’après confirmation du paiement.</p></section>
+
+      <section><h2>3. Commande et paiement</h2><p>Le client vérifie le contenu de son panier, choisit son mode de livraison et corrige toute erreur avant de confirmer la commande avec obligation de paiement. Les moyens de paiement envisagés sont le paiement sécurisé par carte bancaire, PayPal et le chèque envoyé par courrier. Le chèque devra être établi à l’ordre de <strong>[NOM JURIDIQUE DU BÉNÉFICIAIRE À CONFIRMER]</strong> et envoyé à <strong>[ADRESSE POSTALE À COMPLÉTER]</strong>. La préparation d’une commande réglée par chèque ne commencera qu’après réception et encaissement du chèque ; le délai de règlement à prévoir sera indiqué au client avant la validation.</p><p><strong>Le paiement en ligne n’est pas encore activé et les commandes par chèque ne sont pas encore organisées : aucune commande ne peut actuellement être conclue sur le site.</strong></p></section>
+
+      <section><h2>4. Livraison</h2><p>La livraison prévue est limitée à la France métropolitaine, par Colissimo à domicile ou Mondial Relay en Point Relais®/Locker. Les tarifs actuellement affichés dans le panier sont des forfaits de 9,59 € et 5,99 €. Le point relais, le poids maximal pris en charge et tout éventuel complément restent à préciser.</p><p>Délai de préparation et délai de livraison : <strong>[À CONFIRMER AVANT OUVERTURE DES COMMANDES]</strong>. Adresse de retour : <strong>[À COMPLÉTER]</strong>.</p></section>
+
+      <section><h2>5. Droit de rétractation</h2><p>Pour une vente à distance, le consommateur dispose en principe de quatorze jours à compter de la réception du bien pour notifier sa décision de se rétracter, sans avoir à motiver sa décision. Il dispose ensuite de quatorze jours pour renvoyer le bien. Les frais directs de retour sont à la charge du consommateur si celui-ci en a été informé avant la commande. Le remboursement intervient selon les conditions et délais légaux.</p><p>Depuis le 19 juin 2026, une fonctionnalité gratuite et facilement accessible doit permettre d’exercer le droit de rétractation directement depuis l’interface en ligne. Cette fonctionnalité doit encore être mise en place avant l’ouverture des commandes. Coordonnées et adresse de retour : <strong>[À COMPLÉTER]</strong>.</p><div className="terms-form"><h3>Modèle de formulaire de rétractation</h3><p>À l’attention de [nom du vendeur, adresse postale et adresse électronique] :</p><p>Je vous notifie ma rétractation du contrat portant sur la vente du bien suivant : [produit].</p><p>Commandé le / reçu le : [date] · Nom : [nom] · Adresse : [adresse] · Date : [date].</p></div></section>
+
+      <section><h2>6. Garanties légales</h2><p>Le consommateur bénéficie des garanties légales applicables, notamment de la garantie légale de conformité et de la garantie contre les vices cachés, dans les conditions prévues par le Code de la consommation et le Code civil. Les droits attachés à ces garanties ne sont pas supprimés par les présentes conditions.</p></section>
+
+      <section><h2>7. Réclamations et médiation</h2><p>Pour toute réclamation, le client peut contacter le vendeur à <strong>[ADRESSE ÉLECTRONIQUE ET ADRESSE POSTALE À COMPLÉTER]</strong>. Après une démarche écrite préalable auprès du vendeur, le consommateur peut saisir gratuitement le médiateur de la consommation auquel le vendeur a adhéré :</p><ul><li>Nom du médiateur : <strong>[À COMPLÉTER]</strong></li><li>Adresse et site de saisine : <strong>[À COMPLÉTER]</strong></li></ul></section>
+
+      <section><h2>8. Droit applicable</h2><p>Les présentes conditions relèvent du droit français, sous réserve des dispositions impératives de protection accordées au consommateur par la loi applicable à sa résidence. Les juridictions compétentes sont déterminées conformément aux règles de droit commun.</p></section>
+
+      <section className="terms-checklist"><h2>Informations nécessaires pour finaliser cette page</h2><p>Nom juridique, statut, adresse, SIRET, coordonnées de contact, régime de TVA, médiateur auquel l’entreprise adhère, délais et périmètre de livraison, politique de retour, nom exact du bénéficiaire et adresse d’envoi des chèques, modalités de paiement, poids/limites des colis et identifiant REP si applicable. Le formulaire de rétractation en ligne doit également être développé avant l’ouverture des ventes.</p></section>
+      <p className="terms-disclaimer">Ce projet reprend les informations connues et les exigences générales publiées par les autorités françaises. Il doit être complété à partir de la situation réelle du vendeur avant toute publication ou vente.</p>
+    </article>
+  </main></div>;
+}
+
+function Footer({ onOpenCart, onOpenTerms }) {
+  return <footer><div className="container footer-grid"><div><a className="brand" href="#top"><span>Nicolas</span><em>Flammèche</em></a><p>Bougies artisanales façonnées dans les Hauts-de-France.</p></div><div><h4>Boutique</h4><a href="#collection">Collection</a><a href="#collection">Nouveautés</a></div><div><h4>Maison</h4><a href="#atelier">Atelier</a><a href="#rituel">Savoir-faire</a></div><div><h4>Service</h4><button className="footer-link" onClick={onOpenCart}>Livraison</button><button className="footer-link" onClick={onOpenTerms}>Conditions générales de vente</button><span className="footer-link-placeholder">Contact</span></div></div></footer>;
 }
 
 export default App;
+
 
 
